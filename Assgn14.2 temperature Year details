@@ -1,0 +1,21 @@
+https://drive.google.com/file/d/0Bxr27gVaXO5sa0JBamZXdkpYUFk/view?usp=sharing
+
+Problem Statement
+---Fetch date and temperature from temperature_data where zip code is greater than 300000 and less than 399999.
+select date, temperature from temperature_data where zipcode between '300000' and '399999';
+
+---Calculate maximum temperature corresponding to every year from temperature_data table.
+select substr(date,7) as year , max(temperature) from temperature_data group by substr(date,7);
+
+----Calculate maximum temperature from temperature_data table corresponding to those years which have at least 2 entries in the table.
+select substr(date,7) as year, max(temperature) from temperature_data  group by substr(date,7) having count(substr(date,7))>2;
+
+--Create a view on the top of last query, name it temperature_data_vw.
+create view temperature_data_vw as select substr(date,7) as year, max(temperature) from temperature_data  group by substr(date,7) having count(substr(date,7))>2;
+
+---Export contents from temperature_data_vw to a file in local file system, such that each file is '|' delimited.
+INSERT OVERWRITE LOCAL DIRECTORY '/data/'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '|'
+SELECT * FROM temperature_data_vw;
+
